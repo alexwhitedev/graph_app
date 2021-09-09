@@ -217,7 +217,7 @@ def run_app():
     try:
         option = input_argv[0]
     except IndexError:
-        option == 'not'
+        option = 'not'
 
     if option == 'generate_graph':
         graph_parameters = Graph_parameters(
@@ -233,21 +233,22 @@ def run_app():
         graph.load(filename)
         filename = filename.replace('.json', '')
         try:
-            min_fail = input_argv[input_argv.index('-min_M') + 1]
-            max_fail = input_argv[input_argv.index('-max_M') + 1]
+            min_fail = int(input_argv[input_argv.index('-min_M') + 1])
+            max_fail = int(input_argv[input_argv.index('-max_M') + 1])
         except ValueError:
             min_fail = graph.max_m
             max_fail = graph.max_m
+        broken_quantity = random.randint(min_fail, max_fail)
         mode = input_argv[input_argv.index('-mode') + 1]
 
         if mode.isdigit():
             for i in range(int(mode)):
-                graph.generate_states(min_fail, max_fail)
+                graph.generate_states(broken_quantity)
                 graph.save(f'{filename}_labled_{i}.json')
         elif mode == 'all':
-            combinations = list(itertools.combinations(list(graph.vertexes.keys()), graph.max_m))
+            combinations = list(itertools.combinations(list(graph.vertexes.keys()), broken_quantity))
             for selected_vertexes in combinations:
-                graph.generate_states(min_fail, max_fail, list(selected_vertexes))
+                graph.generate_states(broken_quantity, list(selected_vertexes))
                 graph.save(f'{filename}_labled_{combinations.index(selected_vertexes)}.json')
         else:
             raise ValueError('Mode have to be digit or "all"')

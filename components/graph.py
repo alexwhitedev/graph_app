@@ -238,23 +238,27 @@ class Graph(Graph_bounds):
             self.add_link(new_links['output'], new_links['input'])
         self.set_max_m(load_dict['max_m'])
 
-    def generate_states(self, min_broken_quantity, max_broken_quantity, selected_vertexes : list =[]):
+    def generate_states(self, broken_quantity, selected_vertexes : list =[]):
         #  Устанавливаем везде состояние ОК, если загружали с файла и уже есть какие-то состояния
         for vertex_key in self.vertexes.keys():
             self.vertexes[vertex_key].set_state('ok')
-        broken_quantity = random.randint(min_broken_quantity, max_broken_quantity)
-        self.max_m = broken_quantity
+        # broken_quantity = random.randint(min_broken_quantity, max_broken_quantity)
+        self.set_max_m(broken_quantity)
 
         #  RANDOM
         if not selected_vertexes:
+            selected_vertexes = []
             vertexes = list(self.vertexes.keys())
             for i in range(broken_quantity):
                 vertex_key = random.choice(vertexes)
+                selected_vertexes.append(vertex_key)
                 vertexes.remove(vertex_key)
                 vertex = self.vertexes[vertex_key]
                 vertex.set_state('broken')
+            print(selected_vertexes)
         #  SELECTED VERTEXES
         else:
+            print(selected_vertexes)
             for i in range(broken_quantity):
                 self.vertexes[selected_vertexes[0]].set_state('broken')
                 selected_vertexes.pop(0)
